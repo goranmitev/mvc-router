@@ -2,18 +2,10 @@
 
 header('Content-Type: text');
 
-use App\Route;
-
 require __DIR__.'/../vendor/autoload.php';
 
 require '../routes/routes.php';
 
-// Route::get('/patients', function() {
-//     echo 'getting all patients';
-// });
+$app = new App\Application();
 
-Route::get('/patients/{id}', function() {
-    echo 'getting one patient with ID={}';
-});
-
-Route::handle(new App\Request());
+$app->handle(new App\Request());

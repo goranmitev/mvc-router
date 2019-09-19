@@ -34,14 +34,13 @@ class Route
         self::add('delete', $uri.'/{id}', $controller, 'delete');
     }
 
-    public static function handle($request)
+    public static function dispatch($request)
     {
         // var_dump(self::$routes);
 
         $uri = basename($request->server['REQUEST_URI']);
 
         $method = $request->getMethod();
-
 
         if (isset(self::$routes[$method][$uri])) {
             $match = self::$routes[$method][$uri];

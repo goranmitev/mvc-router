@@ -6,6 +6,10 @@ class Request
 {
     public $server;
 
+    public $get;
+
+    public $post;
+
     public function __construct()
     {
         $this->server = $_SERVER;
