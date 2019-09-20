@@ -13,22 +13,15 @@ class Route
     public static function dispatch($request)
     {
 
-
-        $a = '{patientId}';
-        $a = str_replace('{', '{$', $a);
-
-
-        var_dump(self::$routes);
+        // var_dump(self::$routes);
 
         $uri = $request->server['REQUEST_URI'];
 
         $uriParts = self::parseUri($uri);
 
-
-
         $method = $request->getMethod();
 
-        // var_dump($uriParts);
+        // var_dump($uriParts); exit;
 
         foreach (self::$routes as $route) {
 
@@ -36,7 +29,7 @@ class Route
 
             if ($route['controller'] === $uriParts['controller']) {
 
-                var_dump('Controller match.');
+                // var_dump('Controller match.');
 
                 // var_dump($uriParts); exit;
 
@@ -44,6 +37,11 @@ class Route
 
                     if ($route['callback'] instanceof \Closure) {
                         return call_user_func($route['callback'], $route['params']);
+                    }
+
+                    if (count($uriParts['params']) !== count($route['params'])) {
+                        // if the number of parameters match continue
+                        continue;
                     }
 
                     // var_dump($route);
@@ -55,17 +53,29 @@ class Route
                         $controller = new $controllerClass;
                         // determine action here and map params
 
-                        if (count($uriParts['params']) === count($route['params'])) {
-                            $action = 'get';
-                        } else {
-                            $action = 'index';
-                        }
-
                         $params = [];
 
                         for ($i = 0; $i < count($uriParts['params']); $i++) {
                             $index = str_replace('{', '', str_replace('}', '', $route['params'][$i]));
                             $params[$index] = $uriParts['params'][$i];
+                        }
+
+                        if ($method === 'get') {
+                            if (count($uriParts['params']) > 1) {
+                                $action = 'get';
+                            } else {
+                                $action = 'index';
+                            }
+                        } else {
+                            if ($method === 'post') {
+                                $action = 'create';
+                            }
+                            if ($method === 'patch') {
+                                $action = 'update';
+                            }
+                            if ($method === 'delete') {
+                                $action = 'delete';
+                            }
                         }
 
                         call_user_func_array([$controller, $action], $params);
@@ -94,7 +104,7 @@ class Route
         $controller = '';
         $params = [];
 
-        if (strpos($uri, '/') !== -1) {
+        if (strpos($uri, '/') !== false) {
             $parts = explode('/', $uri);
 
             if (count($parts) == 2) {

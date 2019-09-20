@@ -10,9 +10,9 @@ class PatientsController
         echo 'Patients controller index';
     }
 
-    public function get()
+    public function get($patientId)
     {
-        echo 'Patients controller get';
+        echo "PatientsController get patientId = $patientId";
     }
 
     public function create()

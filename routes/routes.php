@@ -10,8 +10,8 @@ Route::get('/', function () {
 
 Route::get('/patients/{patientId}/metrics/{metricId}');
 
-// Route::resource('patients');
-// Route::resource('patients.metrics');
+Route::resource('patients');
+Route::resource('patients.metrics');
 
 // Route::get('/loans/{id}', function() {
 //     echo 'getting one loan with ID={}';
