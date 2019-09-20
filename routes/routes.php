@@ -8,9 +8,11 @@ Route::get('/', function () {
     echo 'Homepage';
 });
 
-Route::resource('patients');
-Route::resource('patients.metrics');
+Route::get('/patients/{patientId}/metrics/{metricId}');
 
-// Route::get('/patients/{id}', function() {
-//     echo 'getting one patient with ID={}';
+// Route::resource('patients');
+// Route::resource('patients.metrics');
+
+// Route::get('/loans/{id}', function() {
+//     echo 'getting one loan with ID={}';
 // });
