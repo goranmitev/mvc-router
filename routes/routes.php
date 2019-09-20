@@ -4,15 +4,11 @@ use App\Route;
 
 
 
-Route::get('/', function () {
-    echo 'Homepage';
-});
-
-Route::get('/patients/{patientId}/metrics/{metricId}');
+// Route::get('/patients/{asdf}/metrics/{utut}', function () {
+//     echo 'Homepage';
+// });
 
 Route::resource('patients');
 Route::resource('patients.metrics');
 
-// Route::get('/loans/{id}', function() {
-//     echo 'getting one loan with ID={}';
-// });
+// Route::get('/clients', 'ClientController@index');

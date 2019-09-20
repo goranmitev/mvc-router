@@ -8,7 +8,7 @@ class PatientsTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->http = new GuzzleHttp\Client(['base_uri' => 'http://localhost:8000']);
+        $this->http = new GuzzleHttp\Client(['base_uri' => 'http://localhost:5555']);
     }
 
     public function testIndex()
