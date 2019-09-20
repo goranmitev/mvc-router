@@ -2,32 +2,52 @@
 
 namespace App;
 
-class PatientsController
+class PatientsController extends Controller
 {
 
     public function index()
     {
-        echo 'Patients controller index';
+        $response = [
+            'action' => 'index',
+            'status' => 'ok'
+        ];
+        echo json_encode($response);
     }
 
     public function get($patientId)
     {
-        echo "PatientsController get patientId = $patientId";
+        $response = [
+            'action' => 'get',
+            'status' => $patientId
+        ];
+        echo json_encode($response);
     }
 
     public function create()
     {
-        echo 'Patients controller create';
+        $response = [
+            'action' => 'create',
+            'status' => 'created'
+        ];
+        echo json_encode($response);
     }
 
     public function update()
     {
-        echo 'Patients controller update';
+        $response = [
+            'action' => 'update',
+            'status' => 'updated'
+        ];
+        echo json_encode($response);
     }
 
     public function delete()
     {
-        echo 'Patients controller delete';
+        $response = [
+            'action' => 'delete',
+            'status' => 'deleted'
+        ];
+        echo json_encode($response);
     }
 
 }

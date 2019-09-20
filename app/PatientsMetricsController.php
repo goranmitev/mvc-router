@@ -2,32 +2,32 @@
 
 namespace App;
 
-class PatientsMetricsController
+class PatientsMetricsController extends Controller
 {
 
     public function index($patientId)
     {
-        echo "PatientsMetricsController patientId=$patientId, controller index";
+        echo json_encode("PatientsMetricsController patientId=$patientId, controller index");
     }
 
     public function get($patientId, $metricId)
     {
-        echo "PatientsMetricsController patientId=$patientId, metricId=$metricId, controller get";
+        echo json_encode("PatientsMetricsController patientId=$patientId, metricId=$metricId, controller get");
     }
 
     public function create()
     {
-        echo 'PatientsMetricsController controller create';
+        echo json_encode('PatientsMetricsController controller create');
     }
 
     public function update()
     {
-        echo 'PatientsMetricsController controller update';
+        echo json_encode('PatientsMetricsController controller update');
     }
 
     public function delete()
     {
-        echo 'PatientsMetricsController controller delete';
+        echo json_encode('PatientsMetricsController controller delete');
     }
 
 }

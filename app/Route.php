@@ -31,9 +31,11 @@ class Route
 
                 // var_dump('Controller match.');
 
-                // var_dump($uriParts); exit;
+                // var_dump($route);
 
                 if ($route['method'] === $method) {
+
+                    // var_dump($route);
 
                     if ($route['callback'] instanceof \Closure) {
                         return call_user_func($route['callback'], $route['params']);
@@ -78,13 +80,15 @@ class Route
                             }
                         }
 
+                        // var_dump($controller, $action, $params);
+
                         call_user_func_array([$controller, $action], $params);
                         break;
                     } else {
                         throw new Exception("Controller {$uriParts['controller']} class does not exist!");
                     }
                 } else {
-                    throw new Exception('Method not allowed');
+                    continue;
                 }
             }
         }
