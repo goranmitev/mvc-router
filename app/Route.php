@@ -13,6 +13,11 @@ class Route
     public static function dispatch($request)
     {
 
+
+        $a = '{patientId}';
+        $a = str_replace('{', '{$', $a);
+
+
         var_dump(self::$routes);
 
         $uri = $request->server['REQUEST_URI'];
@@ -23,11 +28,11 @@ class Route
 
         $method = $request->getMethod();
 
-        var_dump($uriParts);
+        // var_dump($uriParts);
 
         foreach (self::$routes as $route) {
 
-            var_dump('Checking route '. $route['controller']);
+            // var_dump('Checking route '. $route['controller']);
 
             if ($route['controller'] === $uriParts['controller']) {
 
@@ -41,13 +46,29 @@ class Route
                         return call_user_func($route['callback'], $route['params']);
                     }
 
+                    // var_dump($route);
+
                     // here we have a match for the controller and the method
                     $controllerClass = '\App\\'.$route['controller'];
 
                     if (class_exists($controllerClass)) {
                         $controller = new $controllerClass;
                         // determine action here and map params
-                        call_user_func_array([$controller, $action], $route['params']);
+
+                        if (count($uriParts['params']) === count($route['params'])) {
+                            $action = 'get';
+                        } else {
+                            $action = 'index';
+                        }
+
+                        $params = [];
+
+                        for ($i = 0; $i < count($uriParts['params']); $i++) {
+                            $index = str_replace('{', '', str_replace('}', '', $route['params'][$i]));
+                            $params[$index] = $uriParts['params'][$i];
+                        }
+
+                        call_user_func_array([$controller, $action], $params);
                         break;
                     } else {
                         throw new Exception("Controller {$uriParts['controller']} class does not exist!");
@@ -73,30 +94,20 @@ class Route
         $controller = '';
         $params = [];
 
-
-
         if (strpos($uri, '/') !== -1) {
             $parts = explode('/', $uri);
 
-
-
             if (count($parts) == 2) {
                 $controller = self::getControllerClassName([$parts[0]]);
-                if (is_numeric($parts[1])) {
-                    $params[] = $parts[1];
-                } else {
-                    $action = $parts[1];
-                }
-
+                $params[] = $parts[1];
             }
 
             if (count($parts) >= 3) {
 
                 $controller = self::getControllerClassName([$parts[0], $parts[2]]);
 
-                $params = [
-                    $parts[1]
-                ];
+                $params[] = $parts[1];
+
                 if (isset($parts[3])) {
                     $params[] = $parts[3];
                 }
