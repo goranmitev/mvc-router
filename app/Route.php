@@ -26,17 +26,17 @@ class Route
         foreach (self::$routes as $route) {
 
             if ($route['method'] === $method) {
-
-                if ($route['expression'] instanceof \Closure) {
-                    return call_user_func($route['expression'], $uriParts['params']);
-                }
-
+                
                 $expression = self::parseRoute($route['expression']);
 
                 if ($expression['controller'] === $uriParts['controller']) {
 
                     if (self::getRouteNumberOfParams($route['route']) !== count($uriParts['params'])) {
                         continue;
+                    }
+
+                    if ($route['expression'] instanceof \Closure) {                        
+                        return call_user_func($route['expression'], $uriParts['params']);
                     }
 
                     $params = [];
@@ -50,8 +50,7 @@ class Route
 
                     if (class_exists($controllerClass)) {
                         $controller = new $controllerClass;            
-                        call_user_func_array([$controller, $expression['action']], $params);
-                        break;
+                        return call_user_func_array([$controller, $expression['action']], $params);                      
                     } else {
                         throw new Exception("Controller {$controllerClass} class does not exist!");
                     }
@@ -59,7 +58,7 @@ class Route
             }
         }
 
-        return;
+        throw new Exception('Not found');
     }
 
     public static function getRouteNumberOfParams($route)
@@ -145,7 +144,13 @@ class Route
         $controller = '';
         $params = [];
 
-        if (strpos($expression, '@') !== false) {
+        if ($expression instanceof \Closure) {                        
+            return [
+                'controller' => 'Controller'
+            ];
+        }
+
+        if (is_string($expression) && strpos($expression, '@') !== false) {
             $expressionParts = explode('@', $expression);
             $controller = $expressionParts[0];
             $action = $expressionParts[1];

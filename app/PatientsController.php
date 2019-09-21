@@ -25,9 +25,12 @@ class PatientsController extends Controller
 
     public function create()
     {
+        $request = new Request();
+        
         $response = [
-            'action' => 'create',
-            'status' => 'created'
+            'action' => 'update',
+            'status' => 'updated',
+            'name' => $request->post['name']
         ];
         echo json_encode($response);
     }

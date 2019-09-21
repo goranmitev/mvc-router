@@ -40,7 +40,12 @@ class PatientsTest extends TestCase
 
     public function testPost()
     {
-        $response = $this->http->request('POST', 'patients');
+        $response = $this->http->request('POST', 'patients', [
+            'form_params' => [
+                'name' => 'Goran',
+                'city' => 'New York'
+            ]            
+        ]);
 
         $this->assertEquals(200, $response->getStatusCode());
 
@@ -48,7 +53,8 @@ class PatientsTest extends TestCase
         $this->assertEquals("application/json", $contentType);
 
         $body = $response->getBody()->getContents();
-        $this->assertStringContainsString('created', $body);
+        $bodyJson = json_decode($body);
+        $this->assertEquals('Goran', $bodyJson->name);
     }
 
     public function testPatch()
