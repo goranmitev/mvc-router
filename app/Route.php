@@ -6,14 +6,16 @@ use Exception;
 
 class Route
 {
+    /**
+     * Array to hold the routes
+     */
     public static $routes;
 
-
-
+    /**
+     * Dispatch request
+     */
     public static function dispatch($request)
     {
-
-        // var_dump(self::$routes);
 
         $uri = $request->server['REQUEST_URI']; // /patients
 
@@ -21,13 +23,7 @@ class Route
 
         $method = $request->getMethod();
 
-        // var_dump($uriParts);
-
-        
-
-        
-
-        foreach (self::$routes as $route) {           
+        foreach (self::$routes as $route) {
 
             if ($route['method'] === $method) {
 
@@ -37,43 +33,39 @@ class Route
 
                 $expression = self::parseRoute($route['expression']);
 
-                var_dump($expression);
-
-
                 if ($expression['controller'] === $uriParts['controller']) {
 
-                    // var_dump('Checking route '. $expression['controller']);
+                    if (self::getRouteNumberOfParams($route['route']) !== count($uriParts['params'])) {
+                        continue;
+                    }
 
-                    // here we have a match for the controller and the method
-                    $controllerClass = '\App\\'.$expression['controller'];
+                    $params = [];
+
+                    for ($i = 0; $i < count($uriParts['params']); $i++) {
+                        $index = str_replace('{', '', str_replace('}', '', $route['route'][$i]));
+                        $params[$index] = $uriParts['params'][$i];
+                    }
+
+                    $controllerClass = '\App\\' . $expression['controller'];
 
                     if (class_exists($controllerClass)) {
-                        $controller = new $controllerClass;
-                        // determine action here and map params
-
-                        $params = [];
-
-                        // for ($i = 0; $i < count($uriParts['params']); $i++) {
-                        //     $index = str_replace('{', '', str_replace('}', '', $expression['params'][$i]));
-                        //     $params[$index] = $uriParts['params'][$i];
-                        // }
-
-                        // var_dump($controller, $action, $params);
-
+                        $controller = new $controllerClass;            
                         call_user_func_array([$controller, $expression['action']], $params);
                         break;
                     } else {
-                        throw new Exception("Controller {$uriParts['controller']} class does not exist!");
+                        throw new Exception("Controller {$controllerClass} class does not exist!");
                     }
-
-
                 }
             }
-
-            exit;
         }
 
         return;
+    }
+
+    public static function getRouteNumberOfParams($route)
+    {
+        preg_match_all('/\{[^\}]*\}/', $route, $matches);
+        return count($matches[0]);
     }
 
     public static function parseUri($uri)
@@ -102,7 +94,6 @@ class Route
                     $params[] = $parts[3];
                 }
             }
-
         } else {
             $controller = self::getControllerClassName([$uri]);
             $params = [];
@@ -146,28 +137,7 @@ class Route
                 'route' => $route,
                 'expression' => $expression
             ];
-
-            // $expression = ltrim($expression, '/');
-
-            // if ($expression !== '') {
-            //     $parts = self::parseExpression($expression);
-            //     $controller = $parts['controller'];
-            //     $action = $parts['action'];
-            //     $params = $parts['params'];
-            // } else {
-            //     $controller = 'HomeController';
-            //     $action = 'home';
-            //     $params = [];
-            // }
-
-            // self::$routes[] = [
-            //     'method' => $method,
-            //     'controller' => $controller,
-            //     'action' => $action,
-            //     'params' => $params,
-            //     'callback' => $callback
-            // ];
-        }        
+        }
     }
 
     public static function parseRoute($expression)
@@ -183,11 +153,11 @@ class Route
                 'controller' => $controller,
                 'action' => $action,
                 'params' => $params
-            ]; 
+            ];
         }
 
         $route = $expression;
-        
+
         if (strpos($route, '/')) {
             $parts = explode('/', $route);
         } else {
@@ -231,8 +201,8 @@ class Route
             $param2 = rtrim($parts[1], 's');
             $param2 .= 'Id';
 
-            $index = $parts[0].'/{'.$param1.'}/'.$parts[1];
-            $get = $parts[0].'/{'.$param1.'}/'.$parts[1].'/{'.$param2.'}';
+            $index = $parts[0] . '/{' . $param1 . '}/' . $parts[1];
+            $get = $parts[0] . '/{' . $param1 . '}/' . $parts[1] . '/{' . $param2 . '}';
             $create = $index;
             $update = $get;
             $delete = $get;
@@ -242,17 +212,17 @@ class Route
             $param1 = rtrim($name, 's');
             $param1 .= 'Id';
 
-            $get = $name.'/{'.$param1.'}';
+            $get = $name . '/{' . $param1 . '}';
             $create = $index;
             $update = $get;
             $delete = $get;
             $controller = self::getControllerClassName([$name]);
         }
-        
-        self::add('get', $index, $controller.'@index');
-        self::add('get', $get, $controller.'@get');
-        self::add('post', $create, $controller.'@create');
-        self::add('patch', $update, $controller.'@update');
-        self::add('delete', $delete, $controller.'@delete');
+
+        self::add('get', $index, $controller . '@index');
+        self::add('get', $get, $controller . '@get');
+        self::add('post', $create, $controller . '@create');
+        self::add('patch', $update, $controller . '@update');
+        self::add('delete', $delete, $controller . '@delete');
     }
 }

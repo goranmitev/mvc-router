@@ -7,27 +7,50 @@ class PatientsMetricsController extends Controller
 
     public function index($patientId)
     {
-        echo json_encode("PatientsMetricsController patientId=$patientId, controller index");
+        $response = [
+            'success' => true,
+            'patientId' => $patientId
+        ];
+        echo json_encode($response);
     }
 
     public function get($patientId, $metricId)
     {
-        echo json_encode("PatientsMetricsController patientId=$patientId, metricId=$metricId, controller get");
+        $response = [
+            'success' => true,
+            'patientId' => $patientId,
+            'metricId' => $metricId
+        ];
+        echo json_encode($response);
     }
 
-    public function create()
+    public function create($patientId)
     {
-        echo json_encode('PatientsMetricsController controller create');
+        $response = [
+            'success' => true,
+            'patientId' => $patientId
+        ];
+        echo json_encode($response);
     }
 
-    public function update()
+    public function update($patientId, $metricId)
     {
-        echo json_encode('PatientsMetricsController controller update');
+        $response = [
+            'success' => true,
+            'patientId' => $patientId,
+            'metricId' => $metricId
+        ];
+        echo json_encode($response);
     }
 
-    public function delete()
+    public function delete($patientId, $metricId)
     {
-        echo json_encode('PatientsMetricsController controller delete');
+        $response = [
+            'success' => true,
+            'patientId' => $patientId,
+            'metricId' => $metricId
+        ];
+        echo json_encode($response);
     }
 
 }
